@@ -9,10 +9,15 @@ GOFMT=gofmt
 GQLGEN=github.com/99designs/gqlgen
 CONFIG_FILE=gqlgen.yml
 
-.PHONY: all build clean run run-bin test fmt lint generate help deps dev dev-live apollo apollo-studio gin-setup
+.PHONY: all build clean run run-bin test fmt lint generate help deps dev dev-live apollo apollo-studio gin-setup check-files
 
 # Default target
-all: clean fmt generate test build
+all: check-files clean fmt generate test build
+
+# Check important files
+check-files:
+	@echo "Checking important project files..."
+	@./scripts/check-important-files.sh
 
 # Build the application
 build:

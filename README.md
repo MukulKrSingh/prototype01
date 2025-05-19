@@ -28,6 +28,8 @@
 
 This project follows a clean architecture approach with clear separation of concerns:
 
+> **Important**: The `COPILOT_INSTRUCTIONS.md` file contains critical development guidelines and roadmap information. Never delete this file as it provides essential context for the project development.
+
 - `/api` - GraphQL schema definitions
 - `/apollo` - Apollo Studio configurations and example queries
 - `/cmd` - Main application entry points

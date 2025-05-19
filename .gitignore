@@ -41,7 +41,6 @@ Thumbs.db
 run-server.sh
 server
 STEP1_COMPLETE.md
-COPILOT_INSTRUCTIONS.md
 
 # Coverage reports
 coverage.txt
