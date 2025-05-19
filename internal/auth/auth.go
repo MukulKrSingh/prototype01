@@ -14,12 +14,28 @@ import (
 type contextKey string
 
 // UserIDKey is the key used to store the user ID in the context
+// Note: This is deprecated in favor of UserIDContextKey
 const UserIDKey contextKey = "userID"
 
 // ExtractTokenFromContext extracts the JWT token from the request context
 func ExtractTokenFromContext(ctx context.Context) string {
-	// Get the request from the context
-	request := getRequestFromContext(ctx)
+	// First try to get token from Gin context if available
+	ginCtx, exists := GetGinContext(ctx)
+	if exists {
+		// Extract token from gin context
+		token := ginCtx.GetHeader("Authorization")
+		if token != "" {
+			// Remove 'Bearer ' prefix if it exists
+			const prefix = "Bearer "
+			if len(token) > len(prefix) && token[:len(prefix)] == prefix {
+				return token[len(prefix):]
+			}
+			return token
+		}
+	}
+
+	// Fallback to standard HTTP request
+	request := GetRequestFromContext(ctx)
 	if request == nil {
 		return ""
 	}
@@ -60,16 +76,25 @@ func VerifyToken(token string) (string, error) {
 	return "user-123", nil
 }
 
-// GetUserIDFromContext retrieves the user ID from the context if present
-func GetUserIDFromContext(ctx context.Context) (string, bool) {
+// GetUserIDFromOldContextKey retrieves the user ID from the context using the old key (for backward compatibility)
+func GetUserIDFromOldContextKey(ctx context.Context) (string, bool) {
 	userID, ok := ctx.Value(UserIDKey).(string)
 	return userID, ok
 }
 
 // getRequestFromContext extracts the http.Request from the context
 func getRequestFromContext(ctx context.Context) *http.Request {
-	// The HTTP request is commonly stored in context by HTTP middleware
-	// This might need to be adjusted based on how your GraphQL server is set up
+	// First try to get the request from our context helper
+	if request := GetRequestFromContext(ctx); request != nil {
+		return request
+	}
+
+	// Then try to get it from Gin context
+	if request := GetRequestFromGinContext(ctx); request != nil {
+		return request
+	}
+
+	// Fallback to the old way for backward compatibility
 	if requestData := ctx.Value(graphqlRequestContextKey()); requestData != nil {
 		if request, ok := requestData.(*http.Request); ok {
 			return request

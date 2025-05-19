@@ -3,13 +3,13 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/prototype01/internal/api"
 	"github.com/prototype01/internal/config"
 	"github.com/prototype01/internal/middleware"
@@ -46,53 +46,71 @@ func RunServer() {
 	}()
 	logger.Info("MongoDB connection established")
 
-	// Create a new server mux
-	mux := http.NewServeMux()
-
-	// Basic health check endpoint
-	mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "E-Commerce Backend Setup Complete!")
-	})
-
-	// GraphQL handler (to be implemented in Step 2)
-	graphqlHandler, err := api.NewHandler(client)
-	if err != nil {
-		logger.Fatal("Failed to create GraphQL handler", err)
+	// Set Gin mode based on environment
+	if cfg.Env == "production" {
+		gin.SetMode(gin.ReleaseMode)
+	} else {
+		gin.SetMode(gin.DebugMode)
 	}
 
-	// Set up GraphQL endpoint with CORS for Apollo Studio
-	mux.Handle("/graphql", middleware.CORSMiddleware(graphqlHandler))
+	// Create a new Gin router
+	router := gin.New()
 
-	// Set up GraphQL playground in development mode
+	// Add middleware
+	router.Use(middleware.GinLoggerMiddleware())
+	router.Use(middleware.GinRecoveryMiddleware())
+	router.Use(middleware.GinContextMiddleware())
+
+	// Enhanced health check endpoint
+	router.GET("/health", func(c *gin.Context) {
+		// Check MongoDB connection
+		mongoStatus := "ok"
+		if err := client.Database("admin").RunCommand(c, map[string]interface{}{"ping": 1}).Err(); err != nil {
+			mongoStatus = "error: " + err.Error()
+		}
+
+		// Return comprehensive health status
+		c.JSON(http.StatusOK, gin.H{
+			"status":    "running",
+			"timestamp": time.Now().Format(time.RFC3339),
+			"services": gin.H{
+				"mongodb": mongoStatus,
+				"api":     "ok",
+			},
+			"message": "E-Commerce Backend Setup Complete!",
+		})
+	})
+
+	// Register GraphQL handlers
+	if err := api.RegisterHandlers(router, client); err != nil {
+		logger.Fatal("Failed to register GraphQL handlers", err)
+	}
+
+	// Log availability
 	if cfg.Env == "development" {
-		playgroundHandler := api.NewPlaygroundHandler("/graphql")
-		mux.Handle("/playground", playgroundHandler)
 		logger.Info("GraphQL Playground available at http://localhost:" + cfg.Server.Port + "/playground")
 		logger.Info("Apollo Studio can connect to http://localhost:" + cfg.Server.Port + "/graphql")
 	}
 
 	// Home page redirects to playground in development mode
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != "/" {
-			http.NotFound(w, r)
-			return
-		}
-
+	router.GET("/", func(c *gin.Context) {
 		if cfg.Env == "development" {
-			http.Redirect(w, r, "/playground", http.StatusFound)
+			c.Redirect(http.StatusFound, "/playground")
 		} else {
-			fmt.Fprintf(w, "E-Commerce Backend API")
+			c.String(200, "E-Commerce Backend API")
 		}
 	})
 
-	// Apply middleware
-	handler := middleware.LoggingMiddleware(middleware.RecoveryMiddleware(mux))
+	// Handle 404
+	router.NoRoute(func(c *gin.Context) {
+		c.String(http.StatusNotFound, "Not Found")
+	})
 
 	// Start server
 	port := cfg.Server.Port
 	httpServer := &http.Server{
 		Addr:    ":" + port,
-		Handler: handler,
+		Handler: router,
 	}
 
 	// Start server in a goroutine

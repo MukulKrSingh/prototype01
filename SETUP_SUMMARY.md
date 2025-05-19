@@ -35,6 +35,7 @@
 5. **Essential Packages**
    - Added key dependencies:
      - `github.com/99designs/gqlgen`: GraphQL code generation
+     - `github.com/gin-gonic/gin`: High-performance web framework
      - `go.mongodb.org/mongo-driver`: MongoDB driver
      - `github.com/golang-jwt/jwt/v5`: JWT authentication
      - `github.com/joho/godotenv`: Environment configuration
@@ -44,7 +45,8 @@
    - Set up GraphQL schema and resolvers
    - Implemented GraphQL playground for development
    - Added Apollo Studio integration for enhanced API testing
-   - Enabled introspection and automatic persisted queries
+   - Enabled introspection for API discovery
+   - Implemented in-memory cache for Automatic Persisted Queries (APQ)
    - Implemented CORS middleware for Apollo Studio compatibility
 
 7. **Documentation**
@@ -61,6 +63,7 @@
 3. Add authentication and authorization logic
 4. Create product, order and user management systems
 5. Implement data validation and error handling
+6. Leverage Gin's advanced features for route grouping and validation
 
 ## How to Proceed
 

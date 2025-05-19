@@ -37,6 +37,11 @@ temp/
 Thumbs.db
 *.swp
 *.swo
+*.new
+run-server.sh
+server
+STEP1_COMPLETE.md
+COPILOT_INSTRUCTIONS.md
 
 # Coverage reports
 coverage.txt

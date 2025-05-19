@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/99designs/gqlgen/graphql"
+	"github.com/gin-gonic/gin"
 	"github.com/prototype01/internal/api/resolvers"
 	"github.com/prototype01/internal/auth"
 	"github.com/prototype01/pkg/logger"
@@ -68,29 +69,44 @@ func ResponseMiddleware() graphql.ResponseMiddleware {
 // AuthMiddleware handles authentication for GraphQL operations
 func AuthMiddleware(resolver *resolvers.Resolver) graphql.OperationMiddleware {
 	return func(ctx context.Context, next graphql.OperationHandler) graphql.ResponseHandler {
-		// Get HTTP request from context using graphqlRequestContextKey
-		// Since transport.GetHTTP is not available in this version of gqlgen
-		// We'll use our own custom auth package to get the request
-		httpRequest := auth.GetRequestFromContext(ctx)
-		if httpRequest == nil {
-			return next(ctx)
-		}
+		// First try to get the Gin context
+		ginContext, exists := ctx.Value(auth.GinContextKey).(*gin.Context)
+		if exists {
+			// Extract token from Gin context
+			token := extractTokenFromGin(ginContext)
 
-		// Store the request in context for later token extraction (this is redundant but keeping for clarity)
-		ctx = context.WithValue(ctx, auth.RequestContextKey, httpRequest)
+			if token != "" {
+				// Verify the token
+				userID, err := auth.VerifyToken(token)
+				if err == nil {
+					// If token is valid, set user in context
+					ctx = context.WithValue(ctx, auth.UserIDContextKey, userID)
+					logger.Info("Authenticated user: " + userID)
+				} else {
+					logger.Warn("Invalid authentication token: " + err.Error())
+				}
+			}
+		} else {
+			// Fallback to standard http request for backward compatibility
+			httpRequest := auth.GetRequestFromContext(ctx)
+			if httpRequest != nil {
+				// Store the request in context for later token extraction
+				ctx = context.WithValue(ctx, auth.RequestContextKey, httpRequest)
 
-		// Extract token from request
-		token := extractToken(httpRequest)
+				// Extract token from request
+				token := extractToken(httpRequest)
 
-		if token != "" {
-			// Verify the token
-			userID, err := auth.VerifyToken(token)
-			if err == nil {
-				// If token is valid, set user in context
-				ctx = context.WithValue(ctx, auth.UserIDKey, userID)
-				logger.Info("Authenticated user: " + userID)
-			} else {
-				logger.Warn("Invalid authentication token: " + err.Error())
+				if token != "" {
+					// Verify the token
+					userID, err := auth.VerifyToken(token)
+					if err == nil {
+						// If token is valid, set user in context
+						ctx = context.WithValue(ctx, auth.UserIDContextKey, userID)
+						logger.Info("Authenticated user: " + userID)
+					} else {
+						logger.Warn("Invalid authentication token: " + err.Error())
+					}
+				}
 			}
 		}
 
@@ -114,4 +130,28 @@ func extractToken(r *http.Request) string {
 	}
 
 	return ""
+}
+
+// extractTokenFromGin gets the JWT token from Gin context
+func extractTokenFromGin(c *gin.Context) string {
+	// First try from Authorization header
+	token := c.GetHeader("Authorization")
+	if token != "" {
+		// Remove 'Bearer ' prefix if it exists
+		const prefix = "Bearer "
+		if len(token) > len(prefix) && token[:len(prefix)] == prefix {
+			return token[len(prefix):]
+		}
+		return token
+	}
+
+	// Then try from query parameter
+	token = c.Query("token")
+	if token != "" {
+		return token
+	}
+
+	// Finally try from cookie
+	token, _ = c.Cookie("auth_token")
+	return token
 }

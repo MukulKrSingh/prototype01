@@ -74,6 +74,33 @@ Apollo Studio provides performance metrics for your operations:
 - **CORS Errors**: If you see CORS errors, make sure the `CORSMiddleware` is properly configured for the `/graphql` endpoint
 - **Authentication Issues**: Verify your authorization tokens are correctly formatted
 - **Schema Not Loading**: Check that introspection is enabled in your API
+- **APQ Issues**: If you encounter problems with Automatic Persisted Queries, verify the cache implementation is working correctly
+
+## Automatic Persisted Queries (APQ)
+
+Your API supports Automatic Persisted Queries for improved performance:
+
+1. **What is APQ?**: Instead of sending full query text for every request, clients send a hash, reducing request size and bandwidth usage.
+2. **How it works**: The first time a query is sent, it's persisted in the server-side cache and associated with its hash.
+3. **Benefits**: Smaller request payloads, improved security, and reduced parsing overhead.
+
+To use APQ with Apollo Client:
+```javascript
+import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client';
+import { createPersistedQueryLink } from '@apollo/client/link/persisted-queries';
+import { sha256 } from 'crypto-hash';
+
+const httpLink = createHttpLink({ uri: 'http://localhost:8080/graphql' });
+const persistedQueriesLink = createPersistedQueryLink({ 
+  sha256,
+  useGETForHashedQueries: true 
+});
+
+const client = new ApolloClient({
+  cache: new InMemoryCache(),
+  link: persistedQueriesLink.concat(httpLink),
+});
+```
 
 ## Further Resources
 

@@ -9,7 +9,7 @@ GOFMT=gofmt
 GQLGEN=github.com/99designs/gqlgen
 CONFIG_FILE=gqlgen.yml
 
-.PHONY: all build clean run run-bin test fmt lint generate help deps dev dev-live apollo apollo-studio
+.PHONY: all build clean run run-bin test fmt lint generate help deps dev dev-live apollo apollo-studio gin-setup
 
 # Default target
 all: clean fmt generate test build
@@ -99,6 +99,14 @@ apollo:
 apollo-studio:
 	@echo "Starting server with Apollo Studio integration..."
 	@chmod +x ./scripts/apollo-studio.sh
+	
+# Install and configure Gin framework
+gin-setup:
+	@echo "Setting up Gin framework..."
+	@$(GO) get -u github.com/gin-gonic/gin
+	@$(GO) mod tidy
+	@echo "Gin framework installed!"
+	@echo "Read docs/gin-migration.md for migration details."
 	@./scripts/apollo-studio.sh
 
 # Help command

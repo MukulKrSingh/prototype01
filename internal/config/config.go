@@ -1,6 +1,7 @@
 package config
 
 import (
+	"log"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -34,15 +35,43 @@ const (
 
 // Load loads configuration from environment variables and .env file
 func Load() (*Config, error) {
-	// Load .env file if it exists
-	_ = godotenv.Load()
+	// Try loading .env from multiple possible locations
+	envPaths := []string{
+		".env",                     // Current working directory
+		"../.env",                  // One directory up
+		"../../.env",               // Two directories up (if running from cmd/server)
+		os.Getenv("PWD") + "/.env", // Absolute path from PWD
+	}
+
+	var loadedPath string
+	var loadErr error
+
+	for _, path := range envPaths {
+		log.Printf("Attempting to load .env from: %s\n", path)
+		err := godotenv.Load(path)
+		if err == nil {
+			loadedPath = path
+			log.Printf("Successfully loaded .env from: %s\n", path)
+			break
+		}
+		loadErr = err
+	}
+
+	if loadedPath == "" {
+		log.Printf("Warning: Failed to load .env file: %v\n", loadErr)
+		log.Printf("Current working directory: %s\n", getCwd())
+	}
+
+	// Log the MongoDB connection string being used
+	mongoUri := getEnv("MONGODB_URI", getEnv("MDB_MCP_CONNECTION_STRING", defaultMongoURI))
+	log.Println("Using MongoDB URI:", mongoUri)
 
 	return &Config{
 		Server: ServerConfig{
 			Port: getEnv("PORT", defaultPort),
 		},
 		MongoDB: MongoDBConfig{
-			URI:      getEnv("MONGODB_URI", getEnv("MDB_MCP_CONNECTION_STRING", defaultMongoURI)),
+			URI:      mongoUri,
 			Database: getEnv("MONGODB_DATABASE", defaultMongoDatabase),
 		},
 		Env: getEnv("ENV", defaultEnvironment),
@@ -56,4 +85,13 @@ func getEnv(key, defaultValue string) string {
 		return defaultValue
 	}
 	return value
+}
+
+// Helper to get current working directory
+func getCwd() string {
+	dir, err := os.Getwd()
+	if err != nil {
+		return "unknown"
+	}
+	return dir
 }

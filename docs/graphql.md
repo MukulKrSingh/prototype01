@@ -45,6 +45,8 @@ In Step 1 (Project Setup):
 - Created a configuration file at `gqlgen.yml`
 - Set up placeholder generated code (to be replaced by actual generation in Step 2)
 - Added GraphQL handler and playground handler using gqlgen libraries
+- Implemented an in-memory cache for Automatic Persisted Queries (APQ)
+  - See [Cache Implementation](./cache-implementation.md) for details
 
 ## Future Implementation (Step 2)
 

@@ -24,6 +24,12 @@ The following issues were identified and fixed in the project:
 5. **Added Unit Test**
    - Added a simple unit test for the utils package to ensure testing works properly
 
+6. **Fixed APQ Cache Issue**
+   - Implemented an in-memory cache for Automatic Persisted Queries (APQ)
+   - Resolved the "AutomaticPersistedQuery.Cache can not be nil" error
+   - Created cache package in internal/api/cache with proper interface implementation
+   - Added documentation in docs/cache-implementation.md
+
 ## Next Steps
 
 The codebase is now fully functional for Step 1. To test it:

@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Product catalog management
 - Order processing system
 - User management functionality
+- In-memory cache implementation for GraphQL Automatic Persisted Queries
+
+### Fixed
+- Fixed "AutomaticPersistedQuery.Cache can not be nil" error in GraphQL handler
 
 ## [0.1.0] - 2025-05-18
 

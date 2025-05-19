@@ -107,4 +107,46 @@ mutation {
 }
 ```
 
+## Advanced Features
+
+### Automatic Persisted Queries (APQ)
+
+Our GraphQL API supports Automatic Persisted Queries for improved performance. Here's how it works:
+
+#### Client Setup (Apollo Client)
+```javascript
+import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client';
+import { createPersistedQueryLink } from '@apollo/client/link/persisted-queries';
+import { sha256 } from 'crypto-hash';
+
+const httpLink = createHttpLink({ 
+  uri: 'http://localhost:8080/graphql' 
+});
+
+// Set up persisted queries
+const persistedQueriesLink = createPersistedQueryLink({ 
+  sha256,
+  useGETForHashedQueries: true // Use GET for better caching
+});
+
+const client = new ApolloClient({
+  cache: new InMemoryCache(),
+  link: persistedQueriesLink.concat(httpLink),
+});
+```
+
+#### How APQ Works
+
+1. **First Request**: Client sends a persisted query request with a query ID (SHA-256 hash of the query)
+2. **Cache Miss**: If the server doesn't recognize the ID, it responds with an error
+3. **Full Query**: Client sends the full query text along with the ID
+4. **Cache Storage**: Server stores the query text with its ID in the cache
+5. **Subsequent Requests**: Only the query ID is sent, saving bandwidth
+
+#### Benefits
+- Reduces request size (especially for large queries)
+- Improves network performance
+- Reduces server parsing overhead
+- Works seamlessly with Apollo Client
+
 These examples will be expanded as more functionality is added in Step 2.

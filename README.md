@@ -5,8 +5,9 @@
 ![Go Version](https://img.shields.io/badge/Go-1.22.5-00ADD8?style=for-the-badge&logo=go)
 ![GraphQL](https://img.shields.io/badge/GraphQL-E10098?style=for-the-badge&logo=graphql)
 ![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb)
+![Gin](https://img.shields.io/badge/Gin-00ADD8?style=for-the-badge&logo=go)
 
-**A modern, scalable e-commerce backend built with Go, GraphQL, and MongoDB**
+**A modern, scalable e-commerce backend built with Go, Gin, GraphQL, and MongoDB**
 
 </div>
 
@@ -20,6 +21,8 @@
 - **📊 Analytics** - Basic sales and performance metrics
 - **📱 GraphQL API** - Modern, flexible API powered by gqlgen
 - **🧪 Apollo Studio Integration** - Enhanced API testing and exploration
+- **🚀 Gin Framework** - High-performance HTTP web framework
+- **⚡ Automatic Persisted Queries** - Optimized GraphQL requests with APQ caching
 
 ## 📂 Project Structure
 
@@ -56,6 +59,9 @@ gvm use go1.22.5
 
 # Install dependencies
 go mod download
+
+# Setup Gin framework
+make gin-setup
 ```
 
 ### Configuration

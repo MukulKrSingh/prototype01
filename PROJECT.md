@@ -5,7 +5,46 @@ This document aims to help you understand the Go language concepts used in this 
 ## Table of Contents
 
 - [Go Language Basics](#go-language-basics)
-- [Project Structure Explained](#project-structure-explained)
+- [Project Structure Explained## Middleware Pattern
+
+Middleware functions modify or enhance the behavior of HTTP handlers. We have both standard HTTP and Gin middleware implementations:
+
+### Standard HTTP Middleware
+
+```go
+func AuthMiddleware(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        token := r.Header.Get("Authorization")
+        if token == "" {
+            http.Error(w, "Unauthorized", http.StatusUnauthorized)
+            return
+        }
+        
+        // Validate token...
+        
+        // Call the next handler
+        next.ServeHTTP(w, r)
+    })
+}
+```
+
+### Gin Middleware
+
+```go
+func GinAuthMiddleware() gin.HandlerFunc {
+    return func(c *gin.Context) {
+        token := c.GetHeader("Authorization")
+        if token == "" {
+            c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+            return
+        }
+        
+        // Validate token...
+        
+        // Continue to the next handler
+        c.Next()
+    }
+}e-explained)
 - [Key Go Concepts Used](#key-go-concepts-used)
 - [GraphQL Implementation](#graphql-implementation)
 - [MongoDB Integration](#mongodb-integration)

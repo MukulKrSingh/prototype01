@@ -81,7 +81,8 @@ Internal packages that are specific to this project and not meant to be imported
     - `/internal/domain/services/services.go` - Service interfaces and implementations
 
 - `/internal/middleware/` - HTTP middleware components
-  - `/internal/middleware/cors.go` - CORS middleware for Apollo Studio compatibility
+  - `/internal/middleware/cors.go` - CORS middleware for standard HTTP
+  - `/internal/middleware/gin_middleware.go` - Gin-specific middleware implementations
   - `/internal/middleware/middleware.go` - General middleware implementations including logging and recovery
 
 - `/internal/repository/` - Data access layer
