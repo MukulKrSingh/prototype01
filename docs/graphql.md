@@ -19,7 +19,12 @@ When working with gqlgen in this project, follow these best practices:
    - Run code generation to create Go types and resolver interfaces
    - Implement the resolver interfaces
 
-2. **Resolver implementation:**
+2. **Naming conventions:**
+   - Follow the [GraphQL naming conventions](./graphql-naming-conventions.md) for all operations
+   - Use consistent patterns for queries and mutations
+   - Be descriptive and specific in operation names
+
+3. **Resolver implementation:**
    - Group related resolvers in their own files
    - Use dependency injection for services and repositories 
    - Keep business logic in domain services, not in resolvers

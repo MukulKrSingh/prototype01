@@ -19,6 +19,21 @@
 - **🔍 Search & Filtering** - Advanced product search capabilities
 - **📊 Analytics** - Basic sales and performance metrics
 - **📱 GraphQL API** - Modern, flexible API powered by gqlgen
+- **🧪 Apollo Studio Integration** - Enhanced API testing and exploration
+
+## 📂 Project Structure
+
+This project follows a clean architecture approach with clear separation of concerns:
+
+- `/api` - GraphQL schema definitions
+- `/apollo` - Apollo Studio configurations and example queries
+- `/cmd` - Main application entry points
+- `/docs` - Project documentation
+- `/internal` - Internal packages (domain logic, repositories, services)
+- `/pkg` - Reusable packages that could be imported by other projects
+- `/scripts` - Utility scripts for development and operations
+
+For a detailed explanation of each component, see the [Project Structure](PROJECT_STRUCTURE.md) document.
 
 ## 📋 Prerequisites
 
@@ -80,6 +95,23 @@ make dev-live
 The GraphQL API will be available at `http://localhost:8080/graphql`  
 The GraphQL Playground will be available at `http://localhost:8080/playground`
 
+### Testing with Apollo Studio
+
+This project supports Apollo Studio for GraphQL exploration and testing:
+
+```bash
+# Generate Apollo Studio configuration
+./scripts/apollo-config.sh
+```
+
+To use Apollo Studio:
+1. Start your server with `make dev`
+2. Open [Apollo Studio Explorer](https://studio.apollographql.com/sandbox/explorer)
+3. Enter your GraphQL endpoint: `http://localhost:8080/graphql`
+4. Start building and testing queries
+
+See [docs/apollo-studio.md](docs/apollo-studio.md) for detailed instructions.
+
 ### GraphQL Development with gqlgen
 
 This project uses [gqlgen](https://github.com/99designs/gqlgen) for implementing GraphQL API:
@@ -107,20 +139,28 @@ make build
 ## 📁 Project Structure
 
 ```
-go-ecommerce/
+prototype01/
+├── api/                  # GraphQL schema definitions
+│   └── graphql/          # Schema definitions (*.graphql files)
+├── apollo/               # Apollo Studio configuration
+│   └── queries/          # Example GraphQL queries and mutations
 ├── cmd/                  # Application entry points
 │   └── server/           # API server
+├── docs/                 # Documentation
 ├── internal/             # Private application code
 │   ├── api/              # GraphQL API implementation
+│   ├── auth/             # Authentication and authorization
 │   ├── config/           # Configuration handlers
 │   ├── domain/           # Business logic and entities
-│   └── repository/       # Database interactions
+│   ├── middleware/       # HTTP middleware components
+│   ├── repository/       # Database interactions
+│   └── service/          # Application services
+├── logs/                 # Application logs
 ├── pkg/                  # Public libraries
 │   ├── logger/           # Logging utilities
-│   └── utils/            # Common utilities
-├── api/                  # GraphQL schema definitions
-├── scripts/              # Utility scripts
-└── docs/                 # Documentation
+│   ├── utils/            # Common utilities
+│   └── validator/        # Data validation utilities
+└── scripts/              # Utility scripts
 ```
 
 ## 📈 GraphQL API
@@ -177,9 +217,15 @@ make test
 For more detailed information:
 
 - [Project Understanding Guide](PROJECT.md) - Learn about Go concepts used in this project
-- [API Documentation](docs/API.md) - Detailed API documentation
-- [Database Schema](docs/SCHEMA.md) - Database structure and relationships
+- [Project Structure](PROJECT_STRUCTURE.md) - Detailed explanation of the folder structure
+- [Setup Summary](SETUP_SUMMARY.md) - Summary of completed setup tasks
+- [GraphQL Guide](docs/graphql.md) - GraphQL implementation with gqlgen
+- [GraphQL Examples](docs/graphql-examples.md) - Sample GraphQL operations and patterns
+- [GraphQL Naming Conventions](docs/graphql-naming-conventions.md) - Standards for naming operations
+- [Apollo Studio Guide](docs/apollo-studio.md) - Instructions for using Apollo Studio
 - [Change Log](CHANGELOG.md) - Version history and updates
+
+Sample GraphQL queries and mutations can be found in the `/apollo/queries/` directory.
 
 ## 📄 License
 

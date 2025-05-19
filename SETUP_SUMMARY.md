@@ -12,13 +12,19 @@
 
 3. **Directory Structure**
    - Created standard Go project layout:
+     - `/api`: GraphQL schema definitions
+     - `/apollo`: Apollo Studio configurations and example queries
      - `/cmd/server`: Application entry point
+     - `/docs`: Project documentation
      - `/internal`: Private application code
        - `/api`: GraphQL API implementation
+       - `/auth`: Authentication and authorization
        - `/config`: Configuration handling
        - `/domain`: Business logic and models
+       - `/middleware`: HTTP middlewares
        - `/repository`: Database operations
      - `/pkg`: Reusable libraries
+     - `/scripts`: Utility scripts for development and operations
      - `/api/schema`: GraphQL schema definition
 
 4. **MongoDB Connection**
@@ -34,12 +40,27 @@
      - `github.com/joho/godotenv`: Environment configuration
      - `golang.org/x/crypto`: Password hashing
 
+6. **GraphQL API**
+   - Set up GraphQL schema and resolvers
+   - Implemented GraphQL playground for development
+   - Added Apollo Studio integration for enhanced API testing
+   - Enabled introspection and automatic persisted queries
+   - Implemented CORS middleware for Apollo Studio compatibility
+
+7. **Documentation**
+   - Created comprehensive project documentation
+   - Added detailed GraphQL naming conventions
+   - Documented project structure and architecture
+   - Created Apollo Studio usage guide
+   - Added example queries and mutations with standardized naming
+
 ## Next Steps
 
 1. Design and implement database schema for e-commerce entities
-2. Implement GraphQL resolvers based on the schema
+2. Complete GraphQL resolvers based on the schema
 3. Add authentication and authorization logic
 4. Create product, order and user management systems
+5. Implement data validation and error handling
 
 ## How to Proceed
 

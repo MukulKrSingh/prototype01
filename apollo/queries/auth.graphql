@@ -1,0 +1,57 @@
+# Authentication examples
+# Note: This is a placeholder - actual mutations will depend on your final schema
+
+# Example login mutation (update according to your actual schema)
+mutation LoginUser($email: String!, $password: String!) {
+  loginUser(email: $email, password: $password) {
+    token
+    user {
+      id
+      firstName
+      lastName
+      email
+    }
+  }
+}
+
+# Variables for the login mutation
+{
+  "email": "user@example.com",
+  "password": "password123"
+}
+
+# Example registration mutation
+mutation RegisterUser($input: RegisterUserInput!) {
+  registerUser(input: $input) {
+    user {
+      id
+      firstName
+      lastName
+      email
+    }
+    token
+  }
+}
+
+# Variables for the registration mutation
+{
+  "input": {
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john.doe@example.com",
+    "password": "securePassword123"
+  }
+}
+
+# Example of a query that requires authentication
+# To use, add the Authorization header with the token from login
+query GetUserProfile {
+  me {
+    id
+    firstName
+    lastName
+    email
+    createdAt
+    # Other user fields based on your schema
+  }
+}

@@ -1,0 +1,13 @@
+# Basic health check query
+query GetServerStatus {
+  ping
+}
+
+# Version information
+query GetApiVersion {
+  version {
+    number
+    buildDate
+    environment
+  }
+}

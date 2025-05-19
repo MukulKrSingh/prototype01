@@ -9,7 +9,7 @@ GOFMT=gofmt
 GQLGEN=github.com/99designs/gqlgen
 CONFIG_FILE=gqlgen.yml
 
-.PHONY: all build clean run run-bin test fmt lint generate help deps dev dev-live
+.PHONY: all build clean run run-bin test fmt lint generate help deps dev dev-live apollo apollo-studio
 
 # Default target
 all: clean fmt generate test build
@@ -88,6 +88,19 @@ deps:
 	@$(GO) mod download
 	@echo "Dependencies installed!"
 
+# Setup Apollo Studio config
+apollo:
+	@echo "Setting up Apollo Studio configuration..."
+	@chmod +x ./scripts/apollo-config.sh
+	@./scripts/apollo-config.sh
+	@echo "Apollo Studio configuration complete!"
+
+# Start server and open Apollo Studio
+apollo-studio:
+	@echo "Starting server with Apollo Studio integration..."
+	@chmod +x ./scripts/apollo-studio.sh
+	@./scripts/apollo-studio.sh
+
 # Help command
 help:
 	@echo "Available commands:"
@@ -101,6 +114,8 @@ help:
 	@echo "  make fmt        - Format code"
 	@echo "  make lint       - Lint code"
 	@echo "  make generate   - Generate GraphQL code using gqlgen"
+	@echo "  make apollo     - Generate Apollo Studio configuration"
+	@echo "  make apollo-studio - Start server and open Apollo Studio"
 	@echo "  make deps       - Install dependencies"
 	@echo "  make all        - Clean, format, generate, test, and build"
 	@echo "  make help       - Show this help message"

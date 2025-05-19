@@ -1,0 +1,203 @@
+# Product Queries
+query GetProduct($id: ID!) {
+  product(id: $id) {
+    id
+    name
+    description
+    price
+    category {
+      id
+      name
+    }
+    images {
+      url
+      alt
+    }
+    inStock
+    createdAt
+  }
+}
+
+query ListProducts($filter: ProductFilterInput, $pagination: PaginationInput) {
+  products(filter: $filter, pagination: $pagination) {
+    edges {
+      node {
+        id
+        name
+        price
+        category {
+          name
+        }
+        inStock
+      }
+      cursor
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+    totalCount
+  }
+}
+
+query SearchProducts($query: String!, $pagination: PaginationInput) {
+  searchProducts(query: $query, pagination: $pagination) {
+    products {
+      id
+      name
+      price
+      description
+      score
+    }
+    facets {
+      name
+      options {
+        value
+        count
+      }
+    }
+  }
+}
+
+# Category Queries
+query GetCategory($id: ID!) {
+  category(id: $id) {
+    id
+    name
+    description
+    parentCategory {
+      id
+      name
+    }
+    childCategories {
+      id
+      name
+    }
+    productCount
+  }
+}
+
+query ListCategories($includeEmpty: Boolean) {
+  categories(includeEmpty: $includeEmpty) {
+    id
+    name
+    productCount
+    parentCategory {
+      id
+      name
+    }
+  }
+}
+
+# Order Queries
+query GetOrder($id: ID!) {
+  order(id: $id) {
+    id
+    status
+    createdAt
+    updatedAt
+    items {
+      product {
+        id
+        name
+      }
+      quantity
+      unitPrice
+      totalPrice
+    }
+    subtotal
+    tax
+    shippingCost
+    total
+    shippingAddress {
+      street
+      city
+      state
+      zipCode
+      country
+    }
+    paymentInfo {
+      method
+      lastFourDigits
+      status
+    }
+  }
+}
+
+query ListUserOrders($userId: ID!, $status: OrderStatus, $pagination: PaginationInput) {
+  userOrders(userId: $userId, status: $status, pagination: $pagination) {
+    orders {
+      id
+      status
+      createdAt
+      total
+      items {
+        product {
+          id
+          name
+        }
+        quantity
+      }
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+  }
+}
+
+# User Queries
+query GetUserProfile {
+  me {
+    id
+    email
+    firstName
+    lastName
+    profilePicture
+    shippingAddresses {
+      id
+      isDefault
+      street
+      city
+      state
+      zipCode
+      country
+    }
+    paymentMethods {
+      id
+      isDefault
+      type
+      lastFourDigits
+      expiryMonth
+      expiryYear
+    }
+  }
+}
+
+query GetUserWishlist {
+  myWishlist {
+    id
+    products {
+      id
+      name
+      price
+      inStock
+      images {
+        url
+      }
+    }
+  }
+}
+
+# Analytics Queries
+query GetPopularProducts($limit: Int!, $period: TimePeriod!) {
+  popularProducts(limit: $limit, period: $period) {
+    product {
+      id
+      name
+      price
+    }
+    purchaseCount
+    viewCount
+  }
+}

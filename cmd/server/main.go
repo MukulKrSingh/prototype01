@@ -1,5 +1,5 @@
 // Package server contains the main application entry point
-package server
+package main
 
 import (
 	"context"
@@ -60,14 +60,15 @@ func RunServer() {
 		logger.Fatal("Failed to create GraphQL handler", err)
 	}
 
-	// Set up GraphQL endpoint
-	mux.Handle("/graphql", graphqlHandler)
+	// Set up GraphQL endpoint with CORS for Apollo Studio
+	mux.Handle("/graphql", middleware.CORSMiddleware(graphqlHandler))
 
 	// Set up GraphQL playground in development mode
 	if cfg.Env == "development" {
 		playgroundHandler := api.NewPlaygroundHandler("/graphql")
 		mux.Handle("/playground", playgroundHandler)
 		logger.Info("GraphQL Playground available at http://localhost:" + cfg.Server.Port + "/playground")
+		logger.Info("Apollo Studio can connect to http://localhost:" + cfg.Server.Port + "/graphql")
 	}
 
 	// Home page redirects to playground in development mode

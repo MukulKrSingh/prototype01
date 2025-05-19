@@ -1,0 +1,293 @@
+# Product Mutations
+mutation CreateProduct($input: CreateProductInput!) {
+  createProduct(input: $input) {
+    id
+    name
+    price
+    description
+    category {
+      id
+      name
+    }
+    createdAt
+  }
+}
+
+mutation UpdateProduct($id: ID!, $input: UpdateProductInput!) {
+  updateProduct(id: $id, input: $input) {
+    id
+    name
+    price
+    description
+    updatedAt
+  }
+}
+
+mutation DeleteProduct($id: ID!) {
+  deleteProduct(id: $id) {
+    id
+    success
+    message
+  }
+}
+
+mutation UpdateProductInventory($id: ID!, $quantity: Int!) {
+  updateProductInventory(id: $id, quantity: $quantity) {
+    id
+    inStock
+    availableQuantity
+  }
+}
+
+# Category Mutations
+mutation CreateCategory($input: CreateCategoryInput!) {
+  createCategory(input: $input) {
+    id
+    name
+    description
+    parentCategory {
+      id
+      name
+    }
+  }
+}
+
+mutation UpdateCategory($id: ID!, $input: UpdateCategoryInput!) {
+  updateCategory(id: $id, input: $input) {
+    id
+    name
+    description
+    updatedAt
+  }
+}
+
+mutation DeleteCategory($id: ID!) {
+  deleteCategory(id: $id) {
+    id
+    success
+    message
+  }
+}
+
+# User Mutations
+mutation RegisterUser($input: RegisterUserInput!) {
+  registerUser(input: $input) {
+    user {
+      id
+      email
+      firstName
+      lastName
+    }
+    token
+  }
+}
+
+mutation LoginUser($email: String!, $password: String!) {
+  loginUser(email: $email, password: $password) {
+    user {
+      id
+      email
+      firstName
+      lastName
+    }
+    token
+  }
+}
+
+mutation UpdateUserProfile($input: UpdateUserProfileInput!) {
+  updateUserProfile(input: $input) {
+    id
+    email
+    firstName
+    lastName
+    profilePicture
+    updatedAt
+  }
+}
+
+mutation AddShippingAddress($input: ShippingAddressInput!) {
+  addShippingAddress(input: $input) {
+    id
+    isDefault
+    street
+    city
+    state
+    zipCode
+    country
+  }
+}
+
+mutation UpdateShippingAddress($id: ID!, $input: ShippingAddressInput!) {
+  updateShippingAddress(id: $id, input: $input) {
+    id
+    isDefault
+    street
+    city
+    state
+    zipCode
+    country
+  }
+}
+
+mutation DeleteShippingAddress($id: ID!) {
+  deleteShippingAddress(id: $id) {
+    success
+    message
+  }
+}
+
+mutation AddPaymentMethod($input: PaymentMethodInput!) {
+  addPaymentMethod(input: $input) {
+    id
+    isDefault
+    type
+    lastFourDigits
+    expiryMonth
+    expiryYear
+  }
+}
+
+# Cart Mutations
+mutation AddProductToCart($productId: ID!, $quantity: Int!) {
+  addProductToCart(productId: $productId, quantity: $quantity) {
+    id
+    items {
+      product {
+        id
+        name
+        price
+      }
+      quantity
+      totalPrice
+    }
+    subtotal
+    itemCount
+  }
+}
+
+mutation UpdateCartItem($cartItemId: ID!, $quantity: Int!) {
+  updateCartItem(cartItemId: $cartItemId, quantity: $quantity) {
+    id
+    items {
+      id
+      product {
+        id
+        name
+      }
+      quantity
+      totalPrice
+    }
+    subtotal
+    itemCount
+  }
+}
+
+mutation RemoveCartItem($cartItemId: ID!) {
+  removeCartItem(cartItemId: $cartItemId) {
+    id
+    subtotal
+    itemCount
+  }
+}
+
+mutation ClearCart {
+  clearCart {
+    id
+    success
+    message
+  }
+}
+
+# Order Mutations
+mutation CreateOrder($input: CreateOrderInput!) {
+  createOrder(input: $input) {
+    id
+    status
+    items {
+      product {
+        id
+        name
+      }
+      quantity
+      unitPrice
+      totalPrice
+    }
+    subtotal
+    tax
+    shippingCost
+    total
+    createdAt
+  }
+}
+
+mutation UpdateOrderStatus($id: ID!, $status: OrderStatus!) {
+  updateOrderStatus(id: $id, status: $status) {
+    id
+    status
+    updatedAt
+  }
+}
+
+mutation CancelOrder($id: ID!, $reason: String) {
+  cancelOrder(id: $id, reason: $reason) {
+    id
+    status
+    cancellationReason
+    updatedAt
+  }
+}
+
+# Wishlist Mutations
+mutation AddProductToWishlist($productId: ID!) {
+  addProductToWishlist(productId: $productId) {
+    id
+    products {
+      id
+      name
+    }
+    updatedAt
+  }
+}
+
+mutation RemoveProductFromWishlist($productId: ID!) {
+  removeProductFromWishlist(productId: $productId) {
+    id
+    products {
+      id
+      name
+    }
+    updatedAt
+  }
+}
+
+# Reviews and Ratings
+mutation CreateProductReview($productId: ID!, $input: ProductReviewInput!) {
+  createProductReview(productId: $productId, input: $input) {
+    id
+    rating
+    title
+    content
+    createdAt
+    user {
+      id
+      firstName
+    }
+  }
+}
+
+mutation UpdateProductReview($reviewId: ID!, $input: ProductReviewInput!) {
+  updateProductReview(reviewId: $reviewId, input: $input) {
+    id
+    rating
+    title
+    content
+    updatedAt
+  }
+}
+
+mutation DeleteProductReview($reviewId: ID!) {
+  deleteProductReview(reviewId: $reviewId) {
+    success
+    message
+  }
+}
