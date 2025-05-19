@@ -1,0 +1,51 @@
+# Go specific ignores
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+vendor/
+**/bin/
+
+# Environment variables
+.env.local
+.env
+.env.*
+!.env.example
+
+# IDE specific files
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# Logs
+logs/*
+!logs/.gitkeep
+!logs/app/.gitkeep
+!logs/mcp/.gitkeep
+
+# Temporary files
+tmp/
+temp/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Coverage reports
+coverage.txt
+coverage.html
+*.cover
+
+# Local MongoDB data
+/data/db/
+
+# Go workspace specific
+go.work
+go.work.sum

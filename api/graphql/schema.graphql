@@ -1,0 +1,39 @@
+# GraphQL Schema for E-commerce Backend
+# This is a placeholder schema that will be expanded in Step 2
+
+# Custom directives for authorization
+directive @auth on FIELD_DEFINITION
+directive @hasRole(role: String!) on FIELD_DEFINITION
+
+# Custom scalar types
+scalar DateTime
+scalar ObjectID
+
+# Root Query type
+type Query {
+  # Health check query
+  ping: String!
+  
+  # Version information - will return the API version
+  # This is a placeholder and will be implemented in Step 2
+  version: Version!
+}
+
+# Root Mutation type
+type Mutation {
+  # Placeholder mutation
+  noop: Boolean
+}
+
+# Version information type
+type Version {
+  number: String!
+  buildDate: DateTime!
+  environment: String!
+}
+
+# Root schema definition
+schema {
+  query: Query
+  mutation: Mutation
+}
